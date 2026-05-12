@@ -52,6 +52,7 @@ function M:showLanguageSelection()
         {{ text = "Português" .. (settings_lang == "pt_br" and " [OK]" or ""), callback = function() changeLang("pt_br") end }},
         {{ text = "Español" .. (settings_lang == "es" and " [OK]" or ""), callback = function() changeLang("es") end }},
         {{ text = "Українська" .. (settings_lang == "uk" and " [OK]" or ""), callback = function() changeLang("uk") end }},
+        {{ text = "Polski" .. (settings_lang == "pl" and " [OK]" or ""), callback = function() changeLang("pl") end }},
     }
     
     local dialog_title = (self.loc and self.loc:t("menu_language")) or "Language Selection"
@@ -60,7 +61,7 @@ function M:showLanguageSelection()
 end
 
 function M:resolveLanguage(code)
-    local supported = { en=1, de=1, fr=1, ru=1, zh_CN=1, tr=1, pt_br=1, es=1, uk=1 }
+    local supported = { en=1, de=1, fr=1, ru=1, zh_CN=1, tr=1, pt_br=1, es=1, uk=1, pl=1 }
     
     if code == "auto" or not code then
         local gettext = require("gettext")
@@ -127,7 +128,7 @@ function M:checkBookLanguageMatch()
     local supported = {
         en = "English", de = "Deutsch", fr = "Français",
         ru = "Русский", zh_CN = "简体中文", tr = "Türkçe",
-        pt_br = "Português", es = "Español", uk = "Українська"
+        pt_br = "Português", es = "Español", uk = "Українська", pl = "Polski"
     }
     
     if not supported[lang] then return end
