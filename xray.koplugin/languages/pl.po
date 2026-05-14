@@ -321,7 +321,7 @@ msgid "mentions_title"
 msgstr "Wzmianki: %s"
 
 msgid "menu_about"
-msgstr "O wtyczce"
+msgstr "Informacje"
 
 msgid "menu_ai_settings"
 msgstr "Ustawienia AI"
