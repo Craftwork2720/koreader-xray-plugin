@@ -1,6 +1,7 @@
 -- Localization Manager for X-Ray Plugin (with .po support)
 
 local logger = require("logger")
+local json = require("json")
 local ok, lfs = pcall(require, "libs/libkoreader-lfs")
 if not ok or type(lfs) ~= "table" then
     ok, lfs = pcall(require, "lfs")
@@ -361,24 +362,43 @@ end
 function Localization:loadLanguage()
     local DataStorage = require("datastorage")
     local settings_dir = DataStorage:getSettingsDir()
-    local language_file = settings_dir .. "/xray/language.txt"
+    local xray_dir = settings_dir .. "/xray"
+    local settings_file = xray_dir .. "/settings.json"
+    local legacy_file   = xray_dir .. "/language.txt"
     
-    local file = io.open(language_file, "r")
-    if file then
-        local lang = file:read("*a")
-        file:close()
-        lang = lang:match("^%s*(.-)%s*$")
-        
-        if self:languageExists(lang) then
-            self.current_language = lang
-            logger.info("Localization: Loaded language from file:", lang)
-        else
-            logger.warn("Localization: Language not found:", lang)
-            self.current_language = "en"
+    -- 1. Graceful migration: read old language.txt if it exists, then delete it
+    local migrated_lang = nil
+    local legacy_f = io.open(legacy_file, "r")
+    if legacy_f then
+        local val = legacy_f:read("*a"):match("^%s*(.-)%s*$")
+        legacy_f:close()
+        os.remove(legacy_file)
+        if val and #val > 0 then migrated_lang = val end
+        logger.info("Localization: Migrated language.txt -> settings.json")
+    end
+    
+    -- 2. Read from settings.json
+    local lang = migrated_lang
+    local sf = io.open(settings_file, "r")
+    if sf then
+        local content = sf:read("*a")
+        sf:close()
+        local ok_j, decoded = pcall(json.decode, content)
+        if ok_j and type(decoded) == "table" and decoded.language then
+            lang = decoded.language  -- settings.json wins if key exists
         end
+    end
+    
+    -- 3. If we migrated a value but settings.json didn't have one, persist it now
+    if migrated_lang and not lang then
+        lang = migrated_lang
+        self:saveLanguageToJson(xray_dir, settings_file, lang)
+    end
+    
+    if lang and self:languageExists(lang) then
+        self.current_language = lang
     else
         self.current_language = "en"
-        logger.info("Localization: No saved language, using default: en")
     end
 end
 
@@ -410,13 +430,8 @@ function Localization:setLanguage(lang_code)
     local xray_dir = settings_dir .. "/xray"
     lfs.mkdir(xray_dir)
     
-    local language_file = xray_dir .. "/language.txt"
-    local file = io.open(language_file, "w")
-    if file then
-        file:write(lang_code)
-        file:close()
-        logger.info("Localization: Language saved:", lang_code)
-    end
+    local settings_file = xray_dir .. "/settings.json"
+    self:saveLanguageToJson(xray_dir, settings_file, lang_code)
     
     self:loadTranslations()
     
@@ -426,6 +441,24 @@ function Localization:setLanguage(lang_code)
     end
     
     return true
+end
+
+function Localization:saveLanguageToJson(xray_dir, settings_file, lang_code)
+    local existing = {}
+    local sf = io.open(settings_file, "r")
+    if sf then
+        local content = sf:read("*a")
+        sf:close()
+        local ok, decoded = pcall(json.decode, content)
+        if ok and type(decoded) == "table" then existing = decoded end
+    end
+    existing.language = lang_code
+    local out = io.open(settings_file, "w")
+    if out then
+        out:write(json.encode(existing))
+        out:close()
+        logger.info("Localization: Language saved to settings.json:", lang_code)
+    end
 end
 
 -- Reload translations (call this after editing .po files)

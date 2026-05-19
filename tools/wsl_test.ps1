@@ -30,8 +30,8 @@ function Run-Workflow {
     Write-Host " PASSED" -ForegroundColor Green
 
     # 2. Unit Tests
-    Write-Host "Running unit tests (Busted in WSL)..."
-    wsl busted spec/
+    Write-Host "Running unit tests (Bundled LuaJIT in WSL)..."
+    wsl /home/jimmy/squashfs-root/usr/lib/koreader/luajit tools/spec_runner.lua
     if ($LASTEXITCODE -ne 0) {
         Write-Host "Tests FAILED. Aborting sync." -ForegroundColor Red
         return $false
@@ -54,7 +54,9 @@ function Run-Workflow {
     
     # 3. Restore keys from backup
     $MergeScript = "tools/merge_config.py"
-    wsl python3 "/mnt/c/Users/jpautz/Documents/ko/koreader-xray-plugin/$MergeScript" "$WSLDest/$ConfigSubPath" "$BackupPath"
+    $winPath = (Get-Item ".").FullName -replace '\\', '/'
+    $WslCwd = (wsl wslpath -u $winPath).Trim()
+    wsl python3 "$WslCwd/$MergeScript" "$WSLDest/$ConfigSubPath" "$BackupPath"
     wsl rm -f "$BackupPath"
 
     if ($LASTEXITCODE -ne 0) {
@@ -70,7 +72,7 @@ function Run-Workflow {
     Start-Sleep -Seconds 1
 
     # Define start command
-    $DefaultCmd = 'C:\Windows\System32\wsl.exe --exec dbus-launch --exit-with-session bash -c "cd /mnt/c/Users/jpautz/squashfs-root && ./AppRun"'
+    $DefaultCmd = 'C:\Windows\System32\wsl.exe --exec dbus-launch --exit-with-session bash -c "cd /home/jimmy/squashfs-root && ./AppRun"'
     $StartCmd = if ($env:KOREADER_START_CMD) { $env:KOREADER_START_CMD } else { $DefaultCmd }
     
     Write-Host "Starting KOReader: $StartCmd"
