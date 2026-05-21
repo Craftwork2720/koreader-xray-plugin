@@ -1951,8 +1951,7 @@ function M:getAIModelSelectionMenu(setting_type)
             id = "deepseek",
             display_name = "DeepSeek",
             models = {
-                { id = "deepseek-chat", cost = "paid" },
-                { id = "deepseek-reasoner", cost = "paid" },
+                { id = "DeepSeek V4 Flash", cost = "paid" },
             }
         },
         {
