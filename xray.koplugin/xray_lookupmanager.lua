@@ -22,6 +22,80 @@ function LookupManager:normalize(text)
     return clean
 end
 
+-- Normalize text by replacing diacritics with base ASCII characters.
+-- e.g. "białej" → "bialej", "przystań" → "przystan"
+local function strip_diacritics(text)
+    if type(text) ~= "string" or text == "" then return "" end
+    local result = text
+        :gsub("ą", "a"):gsub("ć", "c"):gsub("ę", "e")
+        :gsub("ł", "l"):gsub("ń", "n"):gsub("ó", "o")
+        :gsub("ś", "s"):gsub("ź", "z"):gsub("ż", "z")
+        :gsub("Ą", "A"):gsub("Ć", "C"):gsub("Ę", "E")
+        :gsub("Ł", "L"):gsub("Ń", "N"):gsub("Ó", "O")
+        :gsub("Ś", "S"):gsub("Ź", "Z"):gsub("Ż", "Z")
+    return result
+end
+
+-- Check if two tokens (words) are likely the same word with different
+-- inflectional endings. Uses prefix overlap ratio.
+-- Returns true if the shorter token shares >= 70% of its length as a prefix
+-- with the longer token.
+local function tokens_fuzzy_match(t1, t2)
+    if t1 == t2 then return true end
+    local len1, len2 = #t1, #t2
+    local shorter, longer = t1, t2
+    if len1 > len2 then shorter, longer = t2, t1 end
+    if #shorter < 3 then return false end  -- too short to meaningfully compare
+    -- Find common prefix length
+    local prefix_len = 0
+    for i = 1, #shorter do
+        if shorter:byte(i) == longer:byte(i) then
+            prefix_len = prefix_len + 1
+        else
+            break
+        end
+    end
+    if prefix_len == 0 then return false end
+    -- Require at least 70% of the shorter token to be a prefix of the longer
+    return prefix_len >= math.ceil(#shorter * 0.7)
+end
+
+-- Fuzzy token-based match: split both the query and the name into
+-- space-separated tokens, strip diacritics, and check if every query
+-- token has a corresponding matching token in the name.
+-- e.g. query "bialej przystani" matches name "biala przystan"
+--      because "bialej" ≈ "biala" and "przystani" has "przystan" as prefix
+local function token_fuzzy_match(query_no_diac, name_no_diac)
+    if not query_no_diac or not name_no_diac then return false end
+    if query_no_diac == "" or name_no_diac == "" then return false end
+    local q_tokens = {}
+    for token in query_no_diac:gmatch("%S+") do
+        table.insert(q_tokens, token)
+    end
+    if #q_tokens == 0 then return false end
+
+    local n_tokens = {}
+    for token in name_no_diac:gmatch("%S+") do
+        table.insert(n_tokens, token)
+    end
+    if #n_tokens == 0 then return false end
+
+    -- For each query token, find a matching name token
+    for _, qt in ipairs(q_tokens) do
+        local matched = false
+        for _, nt in ipairs(n_tokens) do
+            if tokens_fuzzy_match(qt, nt) then
+                matched = true
+                break
+            end
+        end
+        if not matched then
+            return false  -- a query token has no counterpart in the name
+        end
+    end
+    return true
+end
+
 -- Collect all matches from a category list using a test function.
 -- Returns a list of {item, type} tables. Skips items already seen (by name).
 local function collectMatches(categories, seen, testFn)
@@ -72,6 +146,9 @@ function LookupManager:lookupAll(text)
     
     local final_results = {}
     
+    -- Prepare diacritic-free versions for fuzzy matching
+    local query_no_diac = strip_diacritics(query)
+    
     local function addIfMatch(item, item_type, score)
         local n = (item.name or ""):lower()
         if seen[n] then return end
@@ -113,6 +190,27 @@ function LookupManager:lookupAll(text)
                 if checkContains(anorm) then
                     seen[n] = true
                     table.insert(final_results, { item = item, item_type = item_type, score = 40 })
+                    return
+                end
+            end
+        end
+        
+        -- Pass 4: Fuzzy token match (handles inflectional variants, e.g. Polish cases)
+        -- Strip diacritics from name and do token-by-token fuzzy comparison
+        local name_no_diac = strip_diacritics(norm)
+        if token_fuzzy_match(query_no_diac, name_no_diac) then
+            seen[n] = true
+            table.insert(final_results, { item = item, item_type = item_type, score = 25 })
+            return
+        end
+        
+        -- Also check aliases with fuzzy token match
+        if item._norm_aliases then
+            for _, anorm in ipairs(item._norm_aliases) do
+                local alias_no_diac = strip_diacritics(anorm)
+                if token_fuzzy_match(query_no_diac, alias_no_diac) then
+                    seen[n] = true
+                    table.insert(final_results, { item = item, item_type = item_type, score = 20 })
                     return
                 end
             end
