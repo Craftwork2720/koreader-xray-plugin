@@ -53,6 +53,36 @@ msgstr "Kanał beta włączony"
 msgid "beta_preference_desc"
 msgstr "Wybierz preferowany kanał aktualizacji:"
 
+msgid "book_mode_auto"
+msgstr "Auto"
+
+msgid "book_mode_desc"
+msgstr "Wybierz tryb dla tej książki."
+
+msgid "book_mode_fiction"
+msgstr "Beletrystyka"
+
+msgid "book_mode_nonfiction"
+msgstr "Literatura faktu"
+
+msgid "book_mode_saved"
+msgstr "Tryb książki zapisany!"
+
+msgid "book_type_about"
+msgstr "Typ książki określa, która strategia wydobycia AI jest używana i które funkcje są dostępne.\n\n- Beletrystyka: Koncentruje się na narracji, postaciach i osi czasu fabuły.\n- Literatura faktu: Koncentruje się na terminach, pojęciach i postaciach historycznych.\n\n'Auto-Detect' pozwoli AI zdecydować po pierwszym pobraniu."
+
+msgid "book_type_auto"
+msgstr "Automatyczne wykrywanie"
+
+msgid "book_type_fiction"
+msgstr "Beletrystyka"
+
+msgid "book_type_nonfiction"
+msgstr "Literatura faktu"
+
+msgid "book_type_saved"
+msgstr "Typ książki zapisany!"
+
 msgid "cache_cleared"
 msgstr "Pamięć podręczna wyczyszczona!\n\nMożesz teraz pobrać nowe dane:\nMenu → X-Ray → Pobierz dane AI"
 
@@ -94,6 +124,9 @@ msgstr "USTAWIONO"
 
 msgid "current_language"
 msgstr "pl"
+
+msgid "current_mode"
+msgstr "Bieżący: "
 
 msgid "custom_api_endpoint_hint"
 msgstr "np. https://openrouter.ai/api/v1/chat/completions"
@@ -173,6 +206,9 @@ msgstr "Wybrany model AI jest niedostępny lub adres URL punktu końcowego jest 
 msgid "error_model_not_found_title"
 msgstr "Nie znaleziono modelu"
 
+msgid "error_no_api_key"
+msgstr "error_no_api_key"
+
 msgid "error_parse_desc"
 msgstr "AI zwróciło odpowiedź, której nie można przetworzyć. To może być tymczasowa usterka."
 
@@ -206,6 +242,9 @@ msgstr "Pobieranie nie powiodło się"
 msgid "extracting_more_characters"
 msgstr "Pobieranie dodatkowych postaci..."
 
+msgid "extracting_more_terms"
+msgstr "Pobieranie dodatkowych terminów..."
+
 msgid "fetch_button"
 msgstr "Pobierz"
 
@@ -233,8 +272,17 @@ msgstr "Tryb pełnej książki"
 msgid "label_aliases"
 msgstr "ALIASY"
 
+msgid "label_category"
+msgstr "KATEGORIA"
+
+msgid "label_definition"
+msgstr "DEFINICJA"
+
 msgid "label_description"
 msgstr "OPIS"
+
+msgid "label_expanded"
+msgstr "OZNACZA"
 
 msgid "label_gender"
 msgstr "PŁEĆ"
@@ -338,6 +386,9 @@ msgstr "Ustawienia Auto X-Ray"
 msgid "menu_beta_channel"
 msgstr "Ustawienia kanału beta"
 
+msgid "menu_book_mode"
+msgstr "Typ książki"
+
 msgid "menu_characters"
 msgstr "Postacie"
 
@@ -364,6 +415,9 @@ msgstr "Pobierz informacje o autorze (AI)"
 
 msgid "menu_fetch_more_chars"
 msgstr "Pobierz więcej postaci"
+
+msgid "menu_fetch_more_terms"
+msgstr "Pobierz więcej terminów"
 
 msgid "menu_historical_figures"
 msgstr "Postacie historyczne"
@@ -394,6 +448,9 @@ msgstr "Drugorzędny model AI"
 
 msgid "menu_settings"
 msgstr "Ustawienia"
+
+msgid "menu_terms"
+msgstr "Słowniczek"
 
 msgid "menu_timeline"
 msgstr "Oś czasu"
@@ -443,6 +500,9 @@ msgstr "płatny"
 msgid "msg_added_characters"
 msgstr "Dodano %d nowych postaci!"
 
+msgid "msg_added_terms"
+msgstr "Dodano %d nowych terminów!"
+
 msgid "msg_fetch_failed"
 msgstr "Pobieranie AI nie powiodło się"
 
@@ -478,6 +538,9 @@ msgstr "Brak danych postaci historycznych.\n\nUżyj najpierw 'Pobierz dane X-Ray
 
 msgid "no_location_data"
 msgstr "Brak danych miejsc. Użyj najpierw 'Pobierz dane X-Ray'."
+
+msgid "no_terms_data"
+msgstr "Brak danych terminów. Użyj najpierw 'Pobierz dane X-Ray'."
 
 msgid "no_timeline_data"
 msgstr "Brak danych osi czasu.\n\nUżyj najpierw 'Pobierz dane X-Ray'.\n\nAI pokaże kluczowe wydarzenia\nw porządku chronologicznym."
@@ -524,6 +587,9 @@ msgstr "Wyszukiwanie postaci"
 msgid "search_hint"
 msgstr "Wprowadź nazwę postaci"
 
+msgid "search_term"
+msgstr "Szukaj terminów"
+
 msgid "spoiler_free_about"
 msgstr "Tryb bez spoilerów ogranicza wydobycie AI do stron, które już przeczytałeś (do Twojej bieżącej strony), zapobiegając spoilerom z przyszłych rozdziałów.\n\nTryb pełnej książki analizuje całą książkę, co może zawierać spoilery."
 
@@ -538,6 +604,9 @@ msgstr "Wybierz preferencje spoilerów dla danych X-Ray:"
 
 msgid "spoiler_preference_title"
 msgstr "Preferencje spoilerów"
+
+msgid "term_not_found"
+msgstr "Nie znaleziono terminu pasującego do '%s'"
 
 msgid "this_chapter"
 msgstr "Ten rozdział"
