@@ -60,9 +60,10 @@ function M:showLanguageSelection()
         es = "Español",
         uk = "Українська",
         hu = "Magyar",
+        pl = "Polski",
     }
     
-    local langs = self.loc and self.loc.available_languages or { "en", "de", "fr", "ru", "zh_CN", "tr", "pt_br", "es", "uk", "hu" }
+    local langs = self.loc and self.loc.available_languages or { "en", "de", "fr", "ru", "zh_CN", "tr", "pt_br", "es", "uk", "hu",  "pl"}
     for _, code in ipairs(langs) do
         local name = LANGUAGE_NAMES[code] or code:upper()
         table.insert(items, {
@@ -92,7 +93,7 @@ function M:resolveLanguage(code)
             supported[c] = 1
         end
     else
-        supported = { en=1, de=1, fr=1, ru=1, zh_CN=1, tr=1, pt_br=1, es=1, uk=1, hu=1 }
+        supported = { en=1, de=1, fr=1, ru=1, zh_CN=1, tr=1, pt_br=1, es=1, uk=1, hu=1, pl-1}
     end
     
     if code == "auto" or not code then
@@ -168,6 +169,7 @@ function M:checkBookLanguageMatch()
         es = "Español",
         uk = "Українська",
         hu = "Magyar",
+        pl = "Polski",
     }
     
     local supported = {}
@@ -1931,8 +1933,8 @@ function M:getAIModelSelectionMenu(setting_type)
         { name = "GPT-5.5 (gpt-5.5) - " .. (self.loc:t("model_paid") or "paid"), provider = "chatgpt", id = "gpt-5.5" },
         { name = "GPT-5.4 Mini (gpt-5.4-mini) - " .. (self.loc:t("model_paid") or "paid"), provider = "chatgpt", id = "gpt-5.4-mini" },
         { name = "GPT-5.4 Nano (gpt-5.4-nano) - " .. (self.loc:t("model_paid") or "paid"), provider = "chatgpt", id = "gpt-5.4-nano" },
-        { name = "DeepSeek Chat (deepseek-chat) - " .. (self.loc:t("model_paid") or "paid"), provider = "deepseek", id = "deepseek-chat" },
-        { name = "DeepSeek Reasoner (deepseek-reasoner) - " .. (self.loc:t("model_paid") or "paid"), provider = "deepseek", id = "deepseek-reasoner" },
+        { name = "DeepSeek V4 Flash (deepseek-v4-flash) - " .. (self.loc:t("model_paid") or "paid"), provider = "deepseek", id = "deepseek-v4-flash" },
+        { name = "DeepSeek V4 Pro (deepseek-v4-pro) - " .. (self.loc:t("model_paid") or "paid"), provider = "deepseek", id = "deepseek-v4-pro" },
         { name = "Claude 4.6 Sonnet (claude-sonnet-4-6) - " .. (self.loc:t("model_paid") or "paid"), provider = "claude", id = "claude-sonnet-4-6" },
         { name = "Claude 4.5 Haiku (claude-haiku-4-5) - " .. (self.loc:t("model_paid") or "paid"), provider = "claude", id = "claude-haiku-4-5" },
     }
