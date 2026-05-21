@@ -1,12 +1,13 @@
 return {
     -- System instruction
-    system_instruction = "Jesteś ekspertem literaturoznawstwa. Twoja odpowiedź musi być WYŁĄCZNIE w poprawnym formacie JSON. Zapewnij wysoką dokładność danych i ściśle trzymaj się dostarczonego kontekstu.",
+    system_instruction = "Jesteś ekspertem literaturoznawstwa. Twoja odpowiedź musi być WYŁĄCZNIE w poprawnym formacie JSON. Wszystkie opisy, nazwy, role, definicje, biografie i streszczenia muszą być w języku polskim. Zapewnij wysoką dokładność danych i ściśle trzymaj się dostarczonego kontekstu.",
 
     -- Author-only prompt (For quick bio lookup)
     author_only = [[Zidentyfikuj i przygotuj biografię autora książki "%s". 
 Metadane sugerują, że autorem jest "%s". 
 
 KRYTYCZNE: Zweryfikuj autora, korzystając z KONTEKSTU TEKSTU KSIĄŻKI (jeśli podano na końcu tego komunikatu), aby zapewnić 100% dokładności i uniknąć błędnych identyfikacji.
+ODPOWIADAJ WYŁĄCZNIE PO POLSKU.
 
 WYMAGANY FORMAT JSON:
 {
@@ -21,7 +22,7 @@ WYMAGANY FORMAT JSON:
 Autor: %s
 Postęp czytania: %d%%
 
-ZADANIE: Wykonaj pełną analizę X-Ray. Wygeneruj TYLKO poprawny obiekt JSON.
+ZADANIE: Wykonaj pełną analizę X-Ray. Wygeneruj TYLKO poprawny obiekt JSON. ODPOWIADAJ WYŁĄCZNIE PO POLSKU.
 
 KRYTYCZNY PODZIAŁ UWAGI:
 Przetwarzasz obszerny dokument z dwoma blokami tekstu podanymi na końcu tego komunikatu:
@@ -125,7 +126,7 @@ Autor: %s
 Postęp czytania: %d%%
 
 ZADANIE: Wyodrębnij DOKŁADNIE 10 DODATKOWYCH ważnych postaci z tekstu.
-Zwróć TYLKO poprawny obiekt JSON.
+Zwróć TYLKO poprawny obiekt JSON. ODPOWIADAJ WYŁĄCZNIE PO POLSKU.
 
 WYMÓG ZWIĘZŁOŚCI (KRYTYCZNY):
 Aby uniknąć obcięcia odpowiedzi AI, utrzymuj opisy postaci poniżej {MAX_CHAR_DESC} znaków.
@@ -160,7 +161,7 @@ Postęp czytania: %d%%
 ZADANIE: Wyodrębnij DOKŁADNIE 15 DODATKOWYCH znaczących terminów, akronimów, żargonu lub pojęć z tekstu.
 - Jeśli ta książka jest non-fiction: wyodrębnij terminy techniczne, pojęcia, akronimy lub żargon.
 - Jeśli ta książka jest fiction: wyodrębnij elementy budowy świata, takie jak frakcje, organizacje, systemy magii, technologie, stworzenia, języki lub wiedza wewnątrzświatowa.
-Zwróć TYLKO poprawny obiekt JSON.
+Zwróć TYLKO poprawny obiekt JSON. ODPOWIADAJ WYŁĄCZNIE PO POLSKU.
 
 WYMÓG ZWIĘZŁOŚCI (KRYTYCZNY):
 Aby uniknąć obcięcia odpowiedzi AI, utrzymuj definicje terminów poniżej {MAX_TERM_DEF} znaków.
@@ -186,7 +187,7 @@ WYMAGANY FORMAT JSON:
 
      -- Targeted Single Word Lookup
      single_word_lookup = [[Użytkownik zaznaczył słowo "%s".
-ZADANIE: Określ, czy to słowo reprezentuje postać, miejsce, postać historyczną lub termin techniczny/akronim w książce.
+ZADANIE: Określ, czy to słowo reprezentuje postać, miejsce, postać historyczną lub termin techniczny/akronim w książce. ODPOWIADAJ WYŁĄCZNIE PO POLSKU.
 
 KRYTYCZNE DLA POSTACI I MIEJSC: Użyj dostarczonego "BOOK TEXT CONTEXT", aby zidentyfikować byt. Jeśli słowo jest podane jako wskazówka "SEARCH TARGET" lub "DIRECT REFERENCE", występuje ono w książce na bieżącej pozycji. Nie odrzucaj go tylko dlatego, że nie zostało dokładnie znalezione w podpróbkowanym tekście narracyjnym. Krótkie imiona (nawet 2-litowe, np. "Oz", "Al", "Jo") są poprawne i powinny być analizowane.
 KRYTYCZNE DLA POSTACI HISTORYCZNYCH: MOŻESZ użyć swojej wewnętrznej wiedzy, aby zweryfikować ich tożsamość i podać biografię/rolę, TYLKO jeśli są prawdziwą, znaczącą postacią historyczną. MUSISZ jednak nadal użyć kontekstu tekstu dla ich znaczenia w książce.
@@ -218,7 +219,7 @@ Jeśli `is_valid` jest false:
 
     -- Smart Merge Descriptions
     merge_descriptions = [[ZADANIE: Połącz następujące dwa opisy tego samego bytu (postaci lub miejsca) w jedno spójne i zwięzłe podsumowanie.
-Usuń zbędne informacje i zapewnij naturalny przepływ końcowego opisu.
+Usuń zbędne informacje i zapewnij naturalny przepływ końcowego opisu. ODPOWIADAJ WYŁĄCZNIE PO POLSKU.
 
 Opis główny: %s
 Opis drugorzędny: %s
