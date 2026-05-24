@@ -1952,6 +1952,7 @@ function M:getAIModelSelectionMenu(setting_type)
             display_name = "DeepSeek",
             models = {
                 { id = "deepseek-v4-flash", cost = "paid" },
+                { id = "deepseek-v4-pro", cost = "paid" },
             }
         },
         {
