@@ -156,7 +156,13 @@ function AIHelper:getChatGPTTokenConfig(model)
 
     -- Xiaomi MiMo uses max_completion_tokens
     if model:find("mimo") then
-        return "max_completion_tokens", 16384
+        -- mimo-v2.5-pro, mimo-v2-pro: default 131072
+        -- mimo-v2.5, mimo-v2-omni: default 32768
+        if model:find("pro") then
+            return "max_completion_tokens", 32000
+        else
+            return "max_completion_tokens", 16384
+        end
     end
     
     -- Raise the default from 8192 to 16384 for other models.
