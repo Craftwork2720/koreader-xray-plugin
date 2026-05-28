@@ -21,6 +21,11 @@ return {
     -- Enter your API key here:
     claude_api_key = "",
 
+    -- Xiaomi MiMo API Key
+    -- To get an API key: https://api.xiaomimimo.com
+    -- Enter your API key here:
+    mimo_api_key = "",
+
     -- Custom API slot 1 (e.g., OpenRouter, any OpenAI-compatible endpoint)
     custom1_api_key  = "",   -- Your API key for this endpoint
     custom1_endpoint = "",   -- e.g., "https://openrouter.ai/api/v1/chat/completions"

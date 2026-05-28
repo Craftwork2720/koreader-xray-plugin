@@ -48,6 +48,12 @@ local AIHelper = {
             api_key = nil,
             endpoint = "https://api.anthropic.com/v1/messages",
         },
+        mimo = {
+            name = "Xiaomi MiMo",
+            enabled = true,
+            api_key = nil,
+            endpoint = "https://api.xiaomimimo.com/v1/chat/completions",
+        },
         custom1 = {
             name = "Custom API 1",
             enabled = true,
@@ -142,10 +148,15 @@ function AIHelper:getChatGPTTokenConfig(model)
         return "max_completion_tokens", 32000
     end
     
-    -- DeepSeek (including R1/reasoner) and older GPT-4 models do NOT support max_completion_tokens 
+    -- DeepSeek (including R1/reasoner) and older GPT-4 models do NOT support max_completion_tokens
     -- in their official APIs and will return a 400 error. They require the standard max_tokens.
     if model:find("reasoner") or model:find("deepseek") or model:find("%-r1") or model:find("/r1") then
         return "max_tokens", 32000
+    end
+
+    -- Xiaomi MiMo uses max_completion_tokens
+    if model:find("mimo") then
+        return "max_completion_tokens", 16384
     end
     
     -- Raise the default from 8192 to 16384 for other models.
@@ -292,7 +303,11 @@ function AIHelper:buildComprehensiveRequest(title, author, context, prompt_overr
             else
                 local model = ai.model or "gpt-4o-mini"
                 url = config.endpoint or "https://api.openai.com/v1/chat/completions"
-                headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. config.api_key }
+                if ai.provider == "mimo" then
+                    headers = { ["Content-Type"] = "application/json", ["api-key"] = config.api_key }
+                else
+                    headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. config.api_key }
+                end
                 local system_instruction_text = self.prompts and self.prompts.system_instruction or "Return valid JSON ONLY."
                 local is_openai_reasoning = (model:find("^gpt%-5") or model:find("^o[13]"))
                 if is_openai_reasoning then
@@ -326,6 +341,11 @@ function AIHelper:buildComprehensiveRequest(title, author, context, prompt_overr
                 if ai.provider == "deepseek" and model:find("reasoner") then
                     -- No effort mapping for official DeepSeek API to avoid 400 errors.
                     -- The 32k token ceiling is already handled by getChatGPTTokenConfig.
+                end
+
+                -- Xiaomi MiMo: disable thinking to get direct JSON output
+                if ai.provider == "mimo" then
+                    req_body.thinking = { type = "disabled" }
                 end
 
                 -- OpenAI gpt-5 and o-series: inject reasoning_effort (xhigh is a valid OpenAI value).
@@ -379,6 +399,7 @@ function AIHelper:hasApiKey()
     if self.providers.claude and self.providers.claude.api_key and self.providers.claude.api_key ~= "" then return true end
     if self.providers.custom1 and self.providers.custom1.api_key and self.providers.custom1.api_key ~= "" then return true end
     if self.providers.custom2 and self.providers.custom2.api_key and self.providers.custom2.api_key ~= "" then return true end
+    if self.providers.mimo and self.providers.mimo.api_key and self.providers.mimo.api_key ~= "" then return true end
     return false
 end
 
@@ -806,7 +827,7 @@ function AIHelper:loadConfig()
     end
 
     local success, config = pcall(dofile, new_config_file)
-    self.config_keys = { gemini = nil, chatgpt = nil, deepseek = nil, claude = nil, custom1 = nil, custom2 = nil }
+    self.config_keys = { gemini = nil, chatgpt = nil, deepseek = nil, claude = nil, mimo = nil, custom1 = nil, custom2 = nil }
     if success and config then
         if config.gemini_api_key then self.providers.gemini.api_key = config.gemini_api_key; self.config_keys.gemini = config.gemini_api_key end
         if config.gemini_primary_model then self.providers.gemini.primary_model = config.gemini_primary_model end
@@ -815,6 +836,7 @@ function AIHelper:loadConfig()
         if config.chatgpt_model then self.providers.chatgpt.model = config.chatgpt_model end
         if config.deepseek_api_key then self.providers.deepseek.api_key = config.deepseek_api_key; self.config_keys.deepseek = config.deepseek_api_key end
         if config.claude_api_key then self.providers.claude.api_key = config.claude_api_key; self.config_keys.claude = config.claude_api_key end
+        if config.mimo_api_key then self.providers.mimo.api_key = config.mimo_api_key; self.config_keys.mimo = config.mimo_api_key end
         if config.default_provider then self.default_provider = config.default_provider end
         
         for _, slot in ipairs({"custom1", "custom2"}) do
@@ -979,7 +1001,7 @@ function AIHelper:loadSettings()
         end
     end
     
-    if settings.claude_api_key then 
+    if settings.claude_api_key then
         if settings.claude_use_ui_key ~= false then
             self.providers.claude.api_key = settings.claude_api_key
             self.providers.claude.ui_key_active = true
@@ -987,7 +1009,16 @@ function AIHelper:loadSettings()
             self.providers.claude.ui_key_active = false
         end
     end
-    
+
+    if settings.mimo_api_key then
+        if settings.mimo_use_ui_key ~= false then
+            self.providers.mimo.api_key = settings.mimo_api_key
+            self.providers.mimo.ui_key_active = true
+        else
+            self.providers.mimo.ui_key_active = false
+        end
+    end
+
     for _, slot in ipairs({"custom1", "custom2"}) do
         if settings[slot .. "_api_key"] then
             if settings[slot .. "_use_ui_key"] ~= false then
@@ -1390,10 +1421,20 @@ function AIHelper:callChatGPT(prompt, config, current_model)
         end
     end
 
+    -- Xiaomi MiMo: disable thinking to get direct JSON output
+    if model:find("mimo") then
+        request_payload.thinking = { type = "disabled" }
+    end
+
     local request_body = json.encode(request_payload)
     self:log("AIHelper: Sending ChatGPT request (" .. #request_body .. " bytes)")
     
-    local headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. config.api_key }
+    local headers
+    if config.endpoint and config.endpoint:find("api.xiaomimimo.com") then
+        headers = { ["Content-Type"] = "application/json", ["api-key"] = config.api_key }
+    else
+        headers = { ["Content-Type"] = "application/json", ["Authorization"] = "Bearer " .. config.api_key }
+    end
     if (config.endpoint or ""):find("openrouter.ai") then
         headers["HTTP-Referer"]       = "https://github.com/koreader/koreader-xray-plugin"
         headers["X-OpenRouter-Title"] = "KOReader X-Ray"

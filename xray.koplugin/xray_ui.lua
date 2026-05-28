@@ -1736,6 +1736,7 @@ function M:getAPIKeysMenu()
         { id = "chatgpt", name = "OpenAI ChatGPT" },
         { id = "deepseek", name = "DeepSeek" },
         { id = "claude", name = "Anthropic Claude" },
+        { id = "mimo", name = "Xiaomi MiMo" },
         { id = "custom1", name = self.loc:t("custom_api_name") and string.format(self.loc:t("custom_api_name"), 1) or "Custom API 1 (OpenAI-compatible)" },
         { id = "custom2", name = self.loc:t("custom_api_name") and string.format(self.loc:t("custom_api_name"), 2) or "Custom API 2 (OpenAI-compatible)" },
     }
@@ -1962,6 +1963,14 @@ function M:getAIModelSelectionMenu(setting_type)
                 { id = "claude-sonnet-4-6", cost = "paid" },
                 { id = "claude-haiku-4-5", cost = "paid" },
             }
+        },
+        {
+            id = "mimo",
+            display_name = "MiMo",
+            models = {
+                { id = "mimo-v2.5-pro", cost = "paid" },
+                { id = "mimo-v2.5", cost = "paid" },
+            }
         }
     }
     
@@ -2142,7 +2151,7 @@ function M:showConfigSummary()
         text = text .. key_label .. ((c.api_key and #c.api_key > 0) and set_label or not_set_label) .. "\n"
     end
     add("gemini", "Google Gemini"); add("chatgpt", "ChatGPT")
-    add("deepseek", "DeepSeek"); add("claude", "Anthropic Claude")
+    add("deepseek", "DeepSeek"); add("claude", "Anthropic Claude"); add("mimo", "Xiaomi MiMo")
     add("custom1", "Custom API 1"); add("custom2", "Custom API 2")
     
     UIManager:show(InfoMessage:new{ text = text, timeout = 15 })
