@@ -63,7 +63,7 @@ function M:showLanguageSelection()
         pl = "Polski",
     }
     
-    local langs = self.loc and self.loc.available_languages or { "en", "de", "fr", "ru", "zh_CN", "tr", "pt_br", "es", "uk", "hu",  "pl"}
+    local langs = self.loc and self.loc.available_languages or { "en", "de", "fr", "ru", "zh_CN", "tr", "pt_br", "es", "uk", "hu", "pl"}
     for _, code in ipairs(langs) do
         local name = LANGUAGE_NAMES[code] or code:upper()
         table.insert(items, {
