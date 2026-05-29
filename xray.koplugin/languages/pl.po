@@ -260,6 +260,12 @@ msgstr "Analizowanie książki w celu wygenerowania danych X-Ray..."
 msgid "fetching_author"
 msgstr "Pobieranie informacji o autorze z %s..."
 
+msgid "fetching_series_context"
+msgstr "Pobieranie kontekstu serii: Książka %d z %d…"
+
+msgid "fetching_series_info"
+msgstr "Identyfikowanie książek w serii…"
+
 msgid "fetching_wait"
 msgstr "⏳ Proszę czekać...\nTen proces może potrwać 10–50 sekund."
 
@@ -310,6 +316,9 @@ msgstr "Niezgodność języka"
 
 msgid "language_changed_reopen"
 msgstr "Język zmieniony. Otwórz ponownie menu, aby zobaczyć zmiany."
+
+msgid "later"
+msgstr "Później"
 
 msgid "linked_entries"
 msgstr "Powiązane wpisy"
@@ -419,6 +428,9 @@ msgstr "Pobierz więcej postaci"
 msgid "menu_fetch_more_terms"
 msgstr "Pobierz więcej terminów"
 
+msgid "menu_fetch_series_context"
+msgstr "Pobierz / odśwież kontekst serii"
+
 msgid "menu_historical_figures"
 msgstr "Postacie historyczne"
 
@@ -445,6 +457,9 @@ msgstr "Wysiłek wnioskowania AI"
 
 msgid "menu_secondary_ai_model"
 msgstr "Drugorzędny model AI"
+
+msgid "menu_series_context"
+msgstr "Kontekst serii"
 
 msgid "menu_settings"
 msgstr "Ustawienia"
@@ -589,6 +604,33 @@ msgstr "Wprowadź nazwę postaci"
 
 msgid "search_term"
 msgstr "Szukaj terminów"
+
+msgid "series_ask_later_msg"
+msgstr "Podsumowanie serii odroczone. Zapytamy ponownie po otwar/wznowieniu tej książki."
+
+msgid "series_context_enabled_toggle"
+msgstr "Włącz kontekst serii"
+
+msgid "series_context_loaded"
+msgstr "Kontekst serii załadowany (%d poprzednich książek)."
+
+msgid "series_context_prompt_text"
+msgstr "Wygląda na to, że to książka %d z serii '%s'. Załadować podsumowanie poprzednich %d książek?\n\n(Możesz to wyłączyć w Ustawienia → Kontekst serii)"
+
+msgid "series_context_prompt_title"
+msgstr "Wykryto serię"
+
+msgid "series_disabled_msg"
+msgstr "Automatyczne podpowiadanie wyłączone dla tej książki. Możesz ręcznie pobrać podsumowanie z menu X-Ray."
+
+msgid "series_no_prior_detected"
+msgstr "Nie wykryto poprzednich książek w tej serii."
+
+msgid "series_prior_books_header"
+msgstr "── Poprzednie książki ──"
+
+msgid "series_prior_label"
+msgstr "[Poprzednia]"
 
 msgid "spoiler_free_about"
 msgstr "Tryb bez spoilerów ogranicza wydobycie AI do stron, które już przeczytałeś (do Twojej bieżącej strony), zapobiegając spoilerom z przyszłych rozdziałów.\n\nTryb pełnej książki analizuje całą książkę, co może zawierać spoilery."

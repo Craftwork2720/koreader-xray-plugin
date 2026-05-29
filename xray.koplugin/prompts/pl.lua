@@ -74,6 +74,11 @@ Krok 4. NIE uwzględniaj powszechnych, codziennych słów.
 - ABSOLUTNIE ŻADNYCH informacji spoza bieżącego postępu czytania. Zatrzymaj się dokładnie na %d%% postępu.
 - Opisy muszą odzwierciedlać stan postaci dokładnie w tym punkcie książki.
 
+ŚCISŁE ZASADY ŹRÓDEŁ WIEDZY (KRYTYCZNE):
+- DLA POSTACI FIKCYJNYCH: Twoje opisy MUSZĄ opierać się WYŁĄCZNIE na tym, co jest jawnie stwierdzone lub wyraźnie wynika z dostarczonego tekstu. NIE uzupełniaj wiedzą z wcześniejszego treningu, źródeł zewnętrznych ani ogólnej znajomości książki/serii/autora.
+- Jeśli postać została dotychczas jedynie wspomniana w tekście, Twój opis musi odzwierciedlać te ograniczone informacje. NIE wnioskuj, nie zakładaj ani nie dodawaj żadnych szczegółów nieopartych na dostarczonym kontekście.
+- JEDYNYM WYJĄTKIEM są PRAWDZIWE POSTACI HISTORYCZNE (umieszczone w `historical_figures`): możesz użyć wewnętrznej wiedzy do napisania ich ogólnej `biography` i historycznej `role`, ale nadal polegaj na tekście książki dla ich `context_in_book`.
+
 ŚCISŁE ZASADY BEZPIECZEŃSTWA JSON:
 - MUSISZ poprawnie escapować wszystkie podwójne cudzysłowy (\") wewnątrz ciągów znaków.
 - NIE używaj nieescapowanych łamań wierszy wewnątrz ciągów znaków.
@@ -148,8 +153,61 @@ WYMAGANY FORMAT JSON:
       "role": "Krótka etykieta archetypu (3-5 słów, np. 'Antagonista', 'Protagonista', 'Ofiara')",
       "gender": "Mężczyzna / Kobieta / Nieznana",
       "occupation": "Zawód/Status",
-      "description": "Dogłębna analiza ze szczegółami z tekstu do tej pory. BEZ SPOILERÓW. (Maks. {MAX_CHAR_DESC} znaków)"
+      "description": "Opis oparty ŚCISŁE na dostarczonym tekście. Nie wnioskuj ani nie dodawaj wiedzy zewnętrznej. BEZ SPOILERÓW. (Maks. {MAX_CHAR_DESC} znaków)"
     }
+  ]
+}]],
+
+    -- Multi-Book Series Context Prompts
+    series_detect = [[Tytuł książki: %s
+Autor: %s
+
+ZADANIE: Określ, czy ta książka jest częścią nazwanej serii.
+Zwróć TYLKO poprawny JSON:
+{
+  "is_series": true,
+  "series_name": "The Wheel of Time",
+  "book_index": 3,
+  "total_books_known": 14
+}
+Jeśli to NIE jest książka z serii, zwróć:
+{ "is_series": false }]],
+
+    prior_book_list = [[Seria: %s
+Bieżący indeks książki: %d
+
+ZADANIE: Wymień tytuły (oraz autorów, jeśli innych niż "%s") książek od 1 do %d
+które POPRZEDZAJĄ bieżącą książkę w tej serii.
+Zwróć TYLKO poprawny JSON:
+{
+  "prior_books": [
+    { "index": 1, "title": "The Eye of the World", "author": "Robert Jordan" }
+  ]
+}]],
+
+    series_book_summary = [[Książka: %s
+Autor: %s
+To książka %d w serii "%s".
+
+ZADANIE: Przygotuj PEŁNE podsumowanie tej książki dla czytelnika,
+który ZARAZ ZACZNIE KOLEJNĄ książkę w serii.
+Uwzględnij: kluczowe postacie (imię, rola, końcowy status), główne miejsca,
+istotne wydarzenia fabularne oraz ważne elementy budowy świata.
+BEZ SPOILERÓW z książek POZA tą.
+
+WYMAGANY FORMAT JSON:
+{
+  "characters": [
+    { "name": "Pełne imię", "aliases": [], "role": "...", "description": "Status na końcu tej książki (maks. 300 znaków)" }
+  ],
+  "locations": [
+    { "name": "...", "description": "..." }
+  ],
+  "terms": [
+    { "name": "...", "aliases": ["Alias 1", "Alias 2"], "expanded": "...", "category": "...", "definition": "..." }
+  ],
+  "timeline": [
+    { "chapter": "Podsumowanie książki", "event": "Jedno szczegółowe, kompleksowe podsumowanie całej fabuły, głównych wydarzeń i zakończenia książki (maks. 2000 znaków). MUSISZ sformatować to podsumowanie za pomocą wielu oddzielnych akapitów rozdzielonych podwójnymi nowymi liniami (\\n\\n) dla czytelności." }
   ]
 }]],
 
